@@ -3,7 +3,7 @@
 const faker = require('faker'),
       fetch = require('node-fetch'),
       imgAPI = 'https://source.unsplash.com/collection/514990/',
-      dataCount = 300;
+      dataCount = 150;
 faker.locale = "ru";
 
 async function getImgURL(i) {
@@ -30,8 +30,8 @@ async function getData() {
       let collapsedImgURL = imgURL.replace('w=1080', 'w=100');
       data.cards.push({
         id: i,
-        collapsed_photo: collapsedImgURL,
-        uncollapsed_photo: uncollapsedImgURL,
+        collapsedPhoto: collapsedImgURL,
+        uncollapsedPhoto: uncollapsedImgURL,
         description: faker.lorem.paragraph(),
         vote: 0
       });
