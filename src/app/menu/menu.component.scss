@@ -1,0 +1,31 @@
+$backgroundColor: #1F2667;
+$textColor: white;
+
+.menu {
+    display: flex;
+    background: $backgroundColor;
+    color: $textColor;
+    align-items: stretch;
+    justify-content: space-around;
+    border-radius: 0 0 20px 20px;
+    padding: 10px;
+    box-shadow:black 0px 2px 4px;
+
+    &__title {
+        font-size: 24px;  
+    }
+
+    &__favorite {
+        font-size: 20px;
+        &:hover {
+            color: gold;
+        }
+    }
+
+    &__banned {
+        font-size: 20px;
+        &:hover {
+            color: darkgrey;
+        }
+    }
+}

@@ -1,1 +1,5 @@
-<p>menu works!</p>
+<nav class="menu">
+    <h1 class="menu__title">IT Summa Test</h1>
+    <app-button class="menu__favorite" [iconType]="favIcon" [text]="favText" (clicked)="clickFavBtn()"></app-button>
+    <app-button class="menu__banned" [iconType]="banIcon" [text]="banText" (clicked)="clickBanBtn()"></app-button>
+</nav>
