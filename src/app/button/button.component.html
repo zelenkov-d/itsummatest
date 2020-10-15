@@ -1,4 +1,4 @@
 <div class="button" (click)="action()">
-    <img src="{{icon}}" alt="icon" class="button__icon">
-    <p class="button__text">{{text}}</p>
+    <fa-icon [icon]="icon" class="button__icon"></fa-icon>
+    <p *ngIf="isText" class="button__text">{{text}}</p>
 </div>

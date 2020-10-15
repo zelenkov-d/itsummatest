@@ -1,8 +1,16 @@
 .button {
+    width: 100%;
+    height: 100%;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
     &__icon {
+        margin: 10px;
     }
 
     &__text {
+        margin: 10px 10px 10px 0;
     }
 }
