@@ -1,1 +1,20 @@
-<p>card works!</p>
+<div [id]="id" class="card" #card>
+    <app-button (clicked)="clickLeftBtn()" [iconType]="leftIcon" [class.card__button_displayed]="open" class="card__ban-button card__button"></app-button>
+    <div class="card__body" 
+        (click) = "clickCard()" 
+        [class.card__body_opened]="open"
+        cdkDragLockAxis="x" cdkDrag
+        [cdkDragDisabled]="!open"
+        cdkDragBoundary=".card"
+        (cdkDragEnded)="ended($event)"
+    >
+        <div class="card__placeholder placeholder card__body" *cdkDragPlaceholder>
+            <app-button [iconType]="rightIcon" class="placeholder__right-icon"></app-button>
+            <app-button [iconType]="leftIcon" class="placeholder__left-icon"></app-button>
+        </div>
+        <img *ngIf="open" src="{{uncollapsedImgURL}}" alt="Uncollapsed Img" class="card__photo_opened">
+        <img *ngIf="!open" src="{{collapsedImgURL}}" alt="Collapsed Img" class="card__photo">
+        <p class="card__desc">{{desc}}</p>
+    </div>
+    <app-button (clicked)="clickRightBtn()" [iconType]="rightIcon" [class.card__button_displayed]="open" class="card__fav-button card__button"></app-button>
+</div>
