@@ -8,11 +8,11 @@ import { DataStorageService } from '../data-storage.service';
   templateUrl: './card-list.component.html',
   styleUrls: ['./card-list.component.scss']
 })
-export class CardListComponent implements OnInit {
+export class CardListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() vote: string;
   @Output() scrolled = new EventEmitter();
-  @Output() close = new EventEmitter();
+  @Output() closed = new EventEmitter();
   @ViewChild('loader') loader: ElementRef<HTMLElement>;
 
   public cards: Observable<Card[]>;
@@ -21,10 +21,10 @@ export class CardListComponent implements OnInit {
   isFavList = false;
   isBanList = false;
 
-  constructor(private dataStorageService: DataStorageService, private host: ElementRef) { 
+  constructor(private dataStorageService: DataStorageService, private host: ElementRef) {
   }
 
-  get element() {
+  get element(): any {
     return this.host.nativeElement;
   }
 
@@ -42,30 +42,36 @@ export class CardListComponent implements OnInit {
     };
 
     this.observer = new IntersectionObserver(([entry]) => {
-      let prevElement: Element = this.loader.nativeElement.previousElementSibling;
-      let lastCardID: number = 0;
+      const prevElement: Element = this.loader.nativeElement.previousElementSibling;
+      let lastCardID = 0;
       if (prevElement) {
         lastCardID = +prevElement.lastElementChild.id;
       }
-      entry.isIntersecting && this.scrolled.emit([lastCardID, this.getVoteID()]);
+      if (entry.isIntersecting) {
+        this.scrolled.emit([lastCardID, this.getVoteID()]);
+      }
     }, options);
 
     this.observer.observe(this.loader.nativeElement);
   }
 
-  clickLeftBtn(id: number) {
+  clickLeftBtn(id: number): void {
     if (this.isFavList) {
-      let result = confirm('Вы уверены, что хотите убрать карточку из избранного?');
-      if (result) this.dataStorageService.setToMainListFromFav(id);
+      const result = confirm('Вы уверены, что хотите убрать карточку из избранного?');
+      if (result) {
+        this.dataStorageService.setToMainListFromFav(id);
+      }
     } else if (this.isBanList) {
-      let result = confirm('Вы уверены, что хотите убрать карточку из черного списка?');
-      if (result) this.dataStorageService.setToMainListFromBan(id);
+      const result = confirm('Вы уверены, что хотите убрать карточку из черного списка?');
+      if (result) {
+        this.dataStorageService.setToMainListFromBan(id);
+      }
     } else {
       this.dataStorageService.setToBanListFromMain(id);
     }
   }
 
-  clickRightBtn(id: number) {
+  clickRightBtn(id: number): void {
     if (this.isFavList) {
       this.dataStorageService.setToBanListFromFav(id);
     } else if (this.isBanList) {
@@ -75,11 +81,11 @@ export class CardListComponent implements OnInit {
     }
   }
 
-  clickExitBtn() {
-    this.close.emit();
+  clickExitBtn(): void {
+    this.closed.emit();
   }
 
-  private isHostScrollable() {
+  private isHostScrollable(): boolean {
     const style = window.getComputedStyle(this.element);
 
     return style.getPropertyValue('overflow') === 'auto' ||
@@ -90,7 +96,7 @@ export class CardListComponent implements OnInit {
     this.dataStorageService.changeOpenCardParam(id, this.getVoteID());
   }
 
-  private getVoteID():number {
+  private getVoteID(): number {
     if (this.vote === 'main') {
       return 0;
     } else if (this.vote === 'fav') {
@@ -108,7 +114,7 @@ export class CardListComponent implements OnInit {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.observer.disconnect();
   }
 }

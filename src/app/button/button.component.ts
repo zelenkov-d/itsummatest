@@ -8,7 +8,7 @@ import { faBan, faSignInAlt, faTimesCircle } from '@fortawesome/free-solid-svg-i
   styleUrls: ['./button.component.scss']
 })
 export class ButtonComponent implements OnInit {
-  
+
   @Input() iconType: string;
   @Input() text = '';
 

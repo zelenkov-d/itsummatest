@@ -31,10 +31,10 @@ export class DataStorageService {
   private partFavCards: Card[];
   private openFavCards: OpenCard[];
 
-  private openCardsStorageKey: string = "openCards";
-  private openFavCardsStorageKey: string = "openFavCards";
-  private openBanCardsStorageKey: string = "openBanCards";
-  private hashIDStorageKey: string = "hashID";
+  private openCardsStorageKey = 'openCards';
+  private openFavCardsStorageKey = 'openFavCards';
+  private openBanCardsStorageKey = 'openBanCards';
+  private hashIDStorageKey = 'hashID';
 
   private loadCount: number;
   private hashID: number;
@@ -55,7 +55,7 @@ export class DataStorageService {
     this.maxLoadCount = this.hashID + this.loadCount;
   }
 
-  public loadFromLocalStorage() {
+  public loadFromLocalStorage(): void {
     if (this.checkLocalStorage(this.hashIDStorageKey)) {
       this.hashID = +this.getDataFromLoacalStorage(this.hashIDStorageKey).toString();
     }
@@ -72,17 +72,17 @@ export class DataStorageService {
 
   public initData(voteID: number): void {
     console.log(voteID);
-    let storageKey = this.getStorageKey(voteID);
-    if (this.checkLocalStorage(storageKey)) { 
+    const storageKey = this.getStorageKey(voteID);
+    if (this.checkLocalStorage(storageKey)) {
       this.httpService.getData(voteID).subscribe((data: Card[]) => {
         this.initCardsWithLocalData(data, voteID);
-        let openCards = this.getOpenCards(voteID);
+        const openCards = this.getOpenCards(voteID);
         this.setDataToLoacalStorage(storageKey, openCards);
       });
     } else {
       this.httpService.getData(voteID).subscribe((data: Card[]) => {
         this.initNewCards(data, voteID);
-        let openCards = this.getOpenCards(voteID);
+        const openCards = this.getOpenCards(voteID);
         this.setDataToLoacalStorage(storageKey, openCards);
       });
     }
@@ -99,11 +99,11 @@ export class DataStorageService {
   }
 
   private initCardsWithLocalData(data: Card[], voteID: number): void {
-    let newOpenCards: OpenCard[] = [];
-    let openCards = this.getOpenCards(voteID);
+    const newOpenCards: OpenCard[] = [];
+    const openCards = this.getOpenCards(voteID);
     data.forEach((element: Card, index: number) => {
-      let card: Card = new Card(element);
-      let targetOpenCard: OpenCard = openCards.find(
+      const card: Card = new Card(element);
+      const targetOpenCard: OpenCard = openCards.find(
         (openCard: OpenCard) => card.id === openCard.id);
       if (targetOpenCard) {
         card.open = targetOpenCard.open;
@@ -118,9 +118,9 @@ export class DataStorageService {
   }
 
   private initNewCards(data: Card[], voteID: number): void {
-    let newOpenCards : OpenCard[] = [];
+    const newOpenCards: OpenCard[] = [];
     data.forEach((value: Card, index: number) => {
-      let card: Card = new Card(value);
+      const card: Card = new Card(value);
       newOpenCards.push(new OpenCard(card.id));
       this.pushCards(card, index, data, voteID);
     });
@@ -128,26 +128,28 @@ export class DataStorageService {
   }
 
   private pushCards(card: Card, index: number, data: Card[], voteID: number): void {
-    let cards = this.getCards(voteID);
-    let partCards = this.getPartCards(voteID);
+    const cards = this.getCards(voteID);
+    const partCards = this.getPartCards(voteID);
     cards.push(card);
     if (index < this.maxLoadCount && index < data.length) {
       partCards.push(card);
-      if (index === data.length - 1) 
+      if (index === data.length - 1) {
         this.pushDataToStream(partCards, voteID);
+      }
     } else {
-      if (index === this.maxLoadCount) 
+      if (index === this.maxLoadCount) {
         this.pushDataToStream(partCards, voteID);
+      }
     }
   }
 
-  private pushDataToStream(data : Card[], voteID: number) : void {
+  private pushDataToStream(data: Card[], voteID: number): void {
     if (voteID === 0) {
-      this.cardsSubject.next(data); 
+      this.cardsSubject.next(data);
     } else if (voteID === 1) {
-      this.cardsFavSubject.next(data); 
+      this.cardsFavSubject.next(data);
     } else if (voteID === 2) {
-      this.cardsBanSubject.next(data); 
+      this.cardsBanSubject.next(data);
     }
   }
 
@@ -169,12 +171,14 @@ export class DataStorageService {
   }
 
   public loadPartData(id: number, voteID: number): void {
-    let cards = this.getCards(voteID);
-    let partCards = this.getPartCards(voteID);
-    let startIndex = id + 1;
+    const cards = this.getCards(voteID);
+    const partCards = this.getPartCards(voteID);
+    const startIndex = id + 1;
     let endIndex = startIndex + this.loadCount;
-    if (endIndex >= cards.length) endIndex = cards.length -1;
-    for(let i = startIndex; i < endIndex; i++) {
+    if (endIndex >= cards.length) {
+      endIndex = cards.length - 1;
+    }
+    for (let i = startIndex; i < endIndex; i++) {
       partCards.push(cards[i]);
     }
   }
@@ -190,92 +194,92 @@ export class DataStorageService {
     );
   }
 
-  public clearExtraCards () {
+  public clearExtraCards(): void {
     this.favCards = [];
     this.partFavCards = [];
     this.banCards = [];
     this.partBanCards = [];
   }
 
-  private removeFromPartCards(id: number, cards: Card[], vote: number) {
+  private removeFromPartCards(id: number, cards: Card[], vote: number): void {
     cards = cards.filter((item: Card) => item.id !== id);
     this.setPartCards(cards, vote);
     this.pushDataToStream(cards, vote);
   }
 
-  public setToFavListFromMain(id: number) {
+  public setToFavListFromMain(id: number): void {
     this.sendDataToServer(id, 1);
     this.openFavCards.push(new OpenCard(id));
     this.setDataToLoacalStorage(this.openFavCardsStorageKey, this.openFavCards);
     this.removeFromPartCards(id, this.partCards, 0);
-    this.openCards = this.openCards.filter((item: OpenCard) => item.id !== id); 
+    this.openCards = this.openCards.filter((item: OpenCard) => item.id !== id);
     this.setDataToLoacalStorage(this.openCardsStorageKey, this.openCards);
   }
 
-  public setToBanListFromMain(id: number) {
+  public setToBanListFromMain(id: number): void {
     this.sendDataToServer(id, 2);
     this.openBanCards.push(new OpenCard(id));
     this.setDataToLoacalStorage(this.openBanCardsStorageKey, this.openBanCards);
     this.removeFromPartCards(id, this.partCards, 0);
-    this.openCards = this.openCards.filter((item: OpenCard) => item.id !== id); 
+    this.openCards = this.openCards.filter((item: OpenCard) => item.id !== id);
     this.setDataToLoacalStorage(this.openCardsStorageKey, this.openCards);
   }
 
-  public setToFavListFromBan(id: number) {
+  public setToFavListFromBan(id: number): void {
     this.sendDataToServer(id, 1);
     this.openFavCards.push(new OpenCard(id));
     this.setDataToLoacalStorage(this.openFavCardsStorageKey, this.openFavCards);
     this.removeFromPartCards(id, this.partBanCards, 2);
-    this.openBanCards = this.openBanCards.filter((item: OpenCard) => item.id !== id); 
+    this.openBanCards = this.openBanCards.filter((item: OpenCard) => item.id !== id);
     this.setDataToLoacalStorage(this.openBanCardsStorageKey, this.openBanCards);
   }
 
-  public setToMainListFromBan(id: number) {
+  public setToMainListFromBan(id: number): void {
     this.sendDataToServer(id, 0);
     this.addToMainList(id, this.partBanCards);
     this.openCards.push(new OpenCard(id));
     this.setDataToLoacalStorage(this.openCardsStorageKey, this.openCards);
     this.removeFromPartCards(id, this.partBanCards, 2);
     this.openBanCards = this.openBanCards.filter((item: OpenCard) => item.id !== id);
-    this.setDataToLoacalStorage(this.openBanCardsStorageKey, this.openBanCards); 
+    this.setDataToLoacalStorage(this.openBanCardsStorageKey, this.openBanCards);
   }
 
-  public setToBanListFromFav(id: number) {
+  public setToBanListFromFav(id: number): void {
     this.sendDataToServer(id, 2);
     this.openBanCards.push(new OpenCard(id));
     this.setDataToLoacalStorage(this.openBanCardsStorageKey, this.openBanCards);
     this.removeFromPartCards(id, this.partFavCards, 1);
-    this.openFavCards = this.openFavCards.filter((item: OpenCard) => item.id !== id); 
+    this.openFavCards = this.openFavCards.filter((item: OpenCard) => item.id !== id);
     this.setDataToLoacalStorage(this.openFavCardsStorageKey, this.openFavCards);
   }
 
-  public setToMainListFromFav(id: number) {
+  public setToMainListFromFav(id: number): void {
     this.sendDataToServer(id, 0);
     this.addToMainList(id, this.partFavCards);
     this.openCards.push(new OpenCard(id));
     this.setDataToLoacalStorage(this.openCardsStorageKey, this.openCards);
     this.removeFromPartCards(id, this.partFavCards, 1);
-    this.openFavCards = this.openFavCards.filter((item: OpenCard) => item.id !== id); 
+    this.openFavCards = this.openFavCards.filter((item: OpenCard) => item.id !== id);
     this.setDataToLoacalStorage(this.openFavCardsStorageKey, this.openFavCards);
   }
 
-  private addToMainList(id: number, fromList: Card[]) {
-    let targetCard = fromList.find(card => card.id === id);
+  private addToMainList(id: number, fromList: Card[]): void {
+    const targetCard = fromList.find(card => card.id === id);
     this.partCards.push(targetCard);
   }
 
-  public setCurrentIDtoStorage(id: number) {
+  public setCurrentIDtoStorage(id: number): void {
     this.setDataToLoacalStorage(this.hashIDStorageKey, id);
   }
 
-  public async changeOpenCardParam(id: number, voteID: number) {
-    let storageKey = this.getStorageKey(voteID);
-    let openCards = this.getOpenCards(voteID);
-    let changeOpenCard = openCards.find((openCard: OpenCard) => id === openCard.id);
+  public async changeOpenCardParam(id: number, voteID: number): Promise<any> {
+    const storageKey = this.getStorageKey(voteID);
+    const openCards = this.getOpenCards(voteID);
+    const changeOpenCard = openCards.find((openCard: OpenCard) => id === openCard.id);
     changeOpenCard.open = !changeOpenCard.open;
     this.setDataToLoacalStorage(storageKey, openCards);
   }
-  
+
   private getStorageKey(voteID: number): string {
     if (voteID === 0) {
       return this.openCardsStorageKey;

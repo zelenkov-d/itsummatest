@@ -1,6 +1,6 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { Card } from '../card';
-import { Location } from '@angular/common'; 
+import { Location } from '@angular/common';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 
 @Component({
@@ -8,10 +8,10 @@ import { CdkDragEnd } from '@angular/cdk/drag-drop';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent implements OnInit {
+export class CardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('card') elem: ElementRef<HTMLElement>;
-  
+
   @Input() card: Card;
   @Output() clicked = new EventEmitter();
   @Output() leftBtnClicked = new EventEmitter();
@@ -31,7 +31,7 @@ export class CardComponent implements OnInit {
 
   constructor(private host: ElementRef, private location: Location) { }
 
-  get element() {
+  get element(): any {
     return this.host.nativeElement;
   }
 
@@ -40,15 +40,11 @@ export class CardComponent implements OnInit {
     this.initIcons();
   }
 
-  drop(id) {
-    console.log("d");
-  }
-
   private initData(): void {
     if (this.card) {
       this.id = this.card.id;
-      this.collapsedImgURL = this.card.collapsed_photo;
-      this.uncollapsedImgURL = this.card.uncollapsed_photo;
+      this.collapsedImgURL = this.card.collapsedPhoto;
+      this.uncollapsedImgURL = this.card.uncollapsedPhoto;
       if (this.card.open) {
         this.desc = this.card.description;
       } else {
@@ -59,7 +55,7 @@ export class CardComponent implements OnInit {
     }
   }
 
-  ended(event: CdkDragEnd) {
+  ended(event: CdkDragEnd): void {
     if (event.distance.x > 60) {
       this.clickRightBtn();
     } else if (event.distance.x < -60) {
@@ -67,7 +63,7 @@ export class CardComponent implements OnInit {
     }
   }
 
-  clickCard() {
+  clickCard(): void {
     this.clicked.emit(this.id);
     this.open = !this.open;
     if (this.open) {
@@ -93,15 +89,17 @@ export class CardComponent implements OnInit {
     };
 
     this.observer = new IntersectionObserver(([entry]) => {
-      let elemTop = this.elem.nativeElement.getBoundingClientRect().top;
-      let elemID = +this.elem.nativeElement.id;
-      if (elemTop <= 0) this.putUrl(elemID); 
+      const elemTop = this.elem.nativeElement.getBoundingClientRect().top;
+      const elemID = +this.elem.nativeElement.id;
+      if (elemTop <= 0) {
+        this.putUrl(elemID);
+      }
     }, options);
 
     this.observer.observe(this.elem.nativeElement);
   }
 
-  initIcons() {
+  initIcons(): void {
     if (this.vote === 0) {
       this.leftIcon = 'ban';
       this.rightIcon = 'fav';
@@ -111,7 +109,7 @@ export class CardComponent implements OnInit {
     }
   }
 
-  private isHostScrollable() {
+  private isHostScrollable(): boolean {
     const style = window.getComputedStyle(this.element);
 
     return style.getPropertyValue('overflow') === 'auto' ||
@@ -122,7 +120,7 @@ export class CardComponent implements OnInit {
     this.location.replaceState(`/#${id}`);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.observer.disconnect();
   }
 }

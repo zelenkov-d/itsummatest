@@ -9,7 +9,7 @@ export class OpenCard {
         this.open = open;
     }
 
-    public changeOpen() {
+    public changeOpen(): void {
         this.open = !this.open;
     }
 }
