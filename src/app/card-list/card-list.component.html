@@ -1,1 +1,21 @@
-<p>card-list works!</p>
+<div class="card-list" cdkDropList [ngClass]="{
+    'card-list_extra-list': isFavList || isBanList,
+    'card-list_theme_fav-list': isFavList,
+    'card-list_theme_ban-list': isBanList
+}">
+    <app-button 
+        (clicked)="clickExitBtn()" 
+        [iconType]="'exit'" 
+        [class.card-list__exit-button_displayed]="isFavList || isBanList" 
+        class="card-list__exit-button"
+    ></app-button>
+    <app-card
+        *ngFor="let card of cards | async" 
+        (clicked) = "onClick($event)" 
+        [card]="card" 
+        class="card-list__card"
+        (leftBtnClicked)="clickLeftBtn($event)"
+        (rightBtnClicked)="clickRightBtn($event)"
+    ></app-card>
+    <div class="card-list__preloader" #loader></div>
+</div>

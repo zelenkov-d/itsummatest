@@ -1,0 +1,51 @@
+.card-list {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    &__exit-button {
+        color: white;
+        font-size: 30px;
+        display: none;
+        &_displayed {
+            display: inline-block;
+            position: fixed;
+            right: 30px;
+            top: 30px;
+            &:hover {
+                color: black;
+            }
+        }
+    }
+
+    &__card {
+        margin: 10px 0;
+    }
+
+    &__preloader {
+        min-height: 10px;
+    }
+
+    &_extra-list{
+        width: 800px;
+        max-height: 800px;
+        min-height: 800px;
+        padding: 20px;
+    }
+
+    &_theme {
+        &_fav-list {
+            background: #dddddd;
+            border-radius: 10px;
+            border: 10px gold solid;
+        }
+
+        &_ban-list {
+            background: #dddddd;
+            border-radius: 10px;
+            border: 10px black solid;           
+        }
+    }
+}
