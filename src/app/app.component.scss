@@ -1,0 +1,33 @@
+.app {
+    font-family: 'Avenir', Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgb(221, 221, 221);
+    overflow-y: auto;
+    height: 100vh;
+    
+    &__menu {
+        width: 900px;
+        position: fixed;
+    }
+
+    &__main-list {
+        margin-top: 70px;
+        width: 800px;
+
+        &_hide-scroll {
+            overflow: hidden;
+        }
+    }
+
+    &__extra-list {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        background: rgba(0, 0, 0, 0.507);
+    }
+}
