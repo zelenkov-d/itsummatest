@@ -2,14 +2,15 @@
 
 const faker = require('faker'),
       fetch = require('node-fetch'),
-      imgAPI = 'https://source.unsplash.com/collection/514990/';
+      imgAPI = 'https://source.unsplash.com/collection/514990/',
+      dataCount = 300;
 faker.locale = "ru";
 
-async function getImgURL() {
+async function getImgURL(i) {
   try {
-    const response = await fetch(imgAPI);
+    let response = await fetch(imgAPI + i);
     if (response.status == 200) {
-      const imgURL = response.url;
+      let imgURL = response.url;
       return imgURL;
     }
   } catch (error) {
@@ -21,17 +22,16 @@ async function getImgURL() {
 async function getData() {
   try {
     let data = { 
-      cards: [],
-      vote: []
+      cards: []
     };
-    for (let i = 0; i < 10; i++) {
-      let imgURL = await getImgURL();
-      let unCollapsedImgURL = imgURL.replace('w=1080', 'w=680');
-      let collapsedImgURL = imgURL.replace('w=1080', 'w=200');
+    for (let i = 0; i < dataCount; i++) {
+      let imgURL = await getImgURL(i);
+      let uncollapsedImgURL = imgURL.replace('w=1080', 'w=680');
+      let collapsedImgURL = imgURL.replace('w=1080', 'w=100');
       data.cards.push({
         id: i,
         collapsed_photo: collapsedImgURL,
-        uncollapsed_photo: unCollapsedImgURL,
+        uncollapsed_photo: uncollapsedImgURL,
         description: faker.lorem.paragraph(),
         vote: 0
       });
