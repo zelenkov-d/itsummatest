@@ -1,11 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http'
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AppComponent } from './app.component';
 import { CardComponent } from './card/card.component';
 import { MenuComponent } from './menu/menu.component';
 import { ButtonComponent } from './button/button.component';
-import { PopUpListComponent } from './pop-up-list/pop-up-list.component';
 import { CardListComponent } from './card-list/card-list.component';
 
 @NgModule({
@@ -14,11 +16,13 @@ import { CardListComponent } from './card-list/card-list.component';
     CardComponent,
     MenuComponent,
     ButtonComponent,
-    PopUpListComponent,
     CardListComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule,
+    FontAwesomeModule,
+    DragDropModule
   ],
   providers: [],
   bootstrap: [AppComponent]
