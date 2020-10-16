@@ -7,10 +7,13 @@
         [cdkDragDisabled]="!open"
         cdkDragBoundary=".card"
         (cdkDragEnded)="ended($event)"
+        (cdkDragStarted)="started($event)"
+        (mouseover)="mouse($event)"
+        (touchstart)="touch($event)"
     >
-        <div class="card__placeholder placeholder card__body" *cdkDragPlaceholder>
-            <app-button [iconType]="rightIcon" class="placeholder__right-icon"></app-button>
-            <app-button [iconType]="leftIcon" class="placeholder__left-icon"></app-button>
+        <div class="placeholder card__body" *cdkDragPlaceholder>
+            <app-button [iconType]="rightIcon" class="placeholder__left-icon"></app-button>
+            <app-button [iconType]="leftIcon" class="placeholder__right-icon"></app-button>
         </div>
         <img *ngIf="open" src="{{uncollapsedImgURL}}" alt="Uncollapsed Img" class="card__photo_opened">
         <img *ngIf="!open" src="{{collapsedImgURL}}" alt="Collapsed Img" class="card__photo">

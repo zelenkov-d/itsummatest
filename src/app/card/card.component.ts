@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { Card } from '../card';
 import { Location } from '@angular/common';
-import { CdkDragEnd } from '@angular/cdk/drag-drop';
+import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-card',
@@ -18,6 +18,8 @@ export class CardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() rightBtnClicked = new EventEmitter();
 
   private observer: IntersectionObserver;
+  private height: number;
+  private width: number;
 
   public id: number;
   public collapsedImgURL: string;
@@ -55,12 +57,27 @@ export class CardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  mouse(event): void {
+    this.width = event.currentTarget.offsetWidth;
+    this.height = event.currentTarget.offsetHeight;
+  }
+
+  touch(event): void {
+    this.width = event.currentTarget.offsetWidth;
+    this.height = event.currentTarget.offsetHeight;
+  }
+
   ended(event: CdkDragEnd): void {
     if (event.distance.x > 60) {
       this.clickRightBtn();
     } else if (event.distance.x < -60) {
       this.clickLeftBtn();
     }
+  }
+
+  started(event: CdkDragStart): void {
+    event.source.getPlaceholderElement().style.width = `${this.width}px`;
+    event.source.getPlaceholderElement().style.height = `${this.height}px`;
   }
 
   clickCard(): void {
