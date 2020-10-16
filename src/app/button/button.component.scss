@@ -5,12 +5,22 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-
     &__icon {
         margin: 10px;
+        @media (max-width: 510px) {
+            margin: 1.5vw;
+        }
+        @media (max-width: 320px) {
+            margin: 5px;
+        }
     }
-
     &__text {
         margin: 10px 10px 10px 0;
+        @media (max-width: 510px) {
+            margin: 1.5vw 1.5vw 1.5vw 0;
+        }
+        @media (max-width: 320px) {
+            margin: 5px 5px 5px 0;
+        }
     }
 }

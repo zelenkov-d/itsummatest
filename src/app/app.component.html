@@ -1,5 +1,5 @@
 <section class="app">
-    <app-menu class="app__menu" (clickedFavList)="clickFavList()" (clickedBanList)="clickBanList()"></app-menu>
+    <app-menu class="app__menu" (clickedFavList)="clickFavList()" (clickedBanList)="clickBanList()" [class.app__menu_over]="!(showFavList || showBanList)"></app-menu>
     <app-card-list [vote] = "'main'" class="app__main-list" (scrolled) = "onScroll($event)"></app-card-list>
     <app-card-list [vote] = "'ban'" *ngIf="showBanList" class="app__extra-list" (scrolled) = "onScroll($event)" (closed)="closeList()"></app-card-list>
     <app-card-list [vote] = "'fav'" *ngIf="showFavList" class="app__extra-list" (scrolled) = "onScroll($event)" (closed)="closeList()"></app-card-list>

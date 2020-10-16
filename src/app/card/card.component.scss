@@ -2,7 +2,9 @@
     display: flex;
     align-items: stretch;
     cursor: pointer;
-
+    @media (max-width: 450px) {
+        margin: 0 -30px;
+    }
     &__button {
         font-size: 30px;
         color: rgb(189, 189, 189);
@@ -10,84 +12,73 @@
         flex-direction: column;
         justify-content: stretch;
         visibility: hidden;
-
         &_displayed {
             visibility: unset;
         }
+        @media (max-width: 450px) {
+            visibility: hidden;
+        }
     }
-
     &__ban-button {
         &:hover {
             color: black;
         }
     }
-
     &__fav-button {
         &:hover {
             color: orange;
         }
     }
-
     &__body {
         font-family: 'Avenir', Arial, Helvetica, sans-serif;
         background: white;
         border-radius: 10px;
         box-shadow: grey 0px 3px 7px;
         display: flex;
-
         &:hover {
             box-shadow: black 0px 3px 7px;
         }
-
         &_opened {
            flex-direction: column; 
            padding: unset;
         }
     }
-
     &__photo {
         border-radius: 10px 0 0 10px;
         width: 100px;
         height: 100px;
-
         &_opened {
             border-radius: 10px 10px 0 0 ;
             width: 100%;
             max-height: 500px;
         }
     }
-
     &__desc {
         padding: 15px;
-    }
-
-    &__placeholder {
-        width: 696.25px;
-        height: 500px;
+        @media (max-width: 820px) {
+            font-size: 2vw;
+        }
+        @media (max-width: 700px) {
+            font-size: 14px;
+        }
     }
 }
 
 .placeholder {
     display: flex;
     justify-content: space-between;
-
     &__left-icon {
-        background-color: black;
-        color: white;
-        font-size: 30px;
-        width: 9%;
-        border-radius: inherit;
-    }
-
-    &__right-icon {
         background-color: gold;
         color: black;
         font-size: 30px;
-        width: 9%;
+        padding-right: 30px;
         border-radius: inherit;
     }
-}
-
-.cdk-drag-placeholder {
-    opacity: 1;
+    &__right-icon {
+        background-color: black;
+        color: white;
+        font-size: 30px;
+        padding-left: 30px;
+        border-radius: inherit;
+    }
 }
