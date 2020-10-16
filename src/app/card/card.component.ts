@@ -57,16 +57,31 @@ export class CardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Запись ширины и высоты блока карточки для placeholder при наведении на карточку мыши
+   *
+   * @param event Событие
+   */
   mouse(event): void {
     this.width = event.currentTarget.offsetWidth;
     this.height = event.currentTarget.offsetHeight;
   }
 
+  /**
+   * Запись ширины и высоты блока карточки для placeholder при нажатии на карточку пальцем
+   *
+   * @param event Событие
+   */
   touch(event): void {
     this.width = event.currentTarget.offsetWidth;
     this.height = event.currentTarget.offsetHeight;
   }
 
+  /**
+   * Обработка события свайпа
+   *
+   * @param event Событие
+   */
   ended(event: CdkDragEnd): void {
     if (event.distance.x > 60) {
       this.clickRightBtn();
@@ -75,6 +90,11 @@ export class CardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Установка ширины и высоты placeholder при начале свайпа
+   *
+   * @param event Событие
+   */
   started(event: CdkDragStart): void {
     event.source.getPlaceholderElement().style.width = `${this.width}px`;
     event.source.getPlaceholderElement().style.height = `${this.height}px`;

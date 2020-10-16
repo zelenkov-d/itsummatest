@@ -34,6 +34,9 @@ export class CardListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initListType();
   }
 
+  /**
+   * Подключение отслеживания прокрутки
+   */
   ngAfterViewInit(): void {
     const options = {
       root: this.isHostScrollable() ? this.host.nativeElement : null,
@@ -92,6 +95,11 @@ export class CardListComponent implements OnInit, AfterViewInit, OnDestroy {
       style.getPropertyValue('overflow-y') === 'scroll';
   }
 
+  /**
+   * Открытие\скрытие карточки при нажатии
+   *
+   * @param id ID карточки
+   */
   onClick(id): void {
     this.dataStorageService.changeOpenCardParam(id, this.getVoteID());
   }

@@ -1,5 +1,3 @@
-import { Identifiers } from '@angular/compiler';
-
 export class OpenCard {
     public id: number;
     public open: boolean;

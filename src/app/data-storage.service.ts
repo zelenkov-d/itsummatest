@@ -55,6 +55,9 @@ export class DataStorageService {
     this.maxLoadCount = this.hashID + this.loadCount;
   }
 
+  /**
+   * Чтение данных с LocalStorage браузера
+   */
   public loadFromLocalStorage(): void {
     if (this.checkLocalStorage(this.hashIDStorageKey)) {
       this.hashID = +this.getDataFromLoacalStorage(this.hashIDStorageKey).toString();
@@ -70,6 +73,11 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Инициализация данных о карточках и обновление значений открытых карточек для списка карточек
+   *
+   * @param voteID ID списка карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   public initData(voteID: number): void {
     console.log(voteID);
     const storageKey = this.getStorageKey(voteID);
@@ -88,6 +96,13 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Получение потока данных о карточках для списка
+   *
+   * @param voteID ID списка карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   *
+   * @returns Поток данных с карточками
+   */
   public getData(voteID: number): Observable<Card[]> {
     if (voteID === 0) {
       return this.cardsObservable;
@@ -98,6 +113,12 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Инициализация массива карточек со считыванием состояний открытости с LocalStorage
+   *
+   * @param data Входной массив карточек
+   * @param voteID ID списка карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   private initCardsWithLocalData(data: Card[], voteID: number): void {
     const newOpenCards: OpenCard[] = [];
     const openCards = this.getOpenCards(voteID);
@@ -117,6 +138,12 @@ export class DataStorageService {
     this.setOpenCards(newOpenCards, voteID);
   }
 
+  /**
+   * Инициализация массива карточек при отстувии данных в LocalStorage
+   *
+   * @param data Входной массив карточек
+   * @param voteID ID списка карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   private initNewCards(data: Card[], voteID: number): void {
     const newOpenCards: OpenCard[] = [];
     data.forEach((value: Card, index: number) => {
@@ -127,6 +154,14 @@ export class DataStorageService {
     this.setOpenCards(newOpenCards, voteID);
   }
 
+  /**
+   * Формирование частей карточек для передачи в поток данных передаваемый компонентам
+   *
+   * @param card Карточка
+   * @param index Идентификатор карточки в массиве
+   * @param data Массив карточек
+   * @param voteID ID списка карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   private pushCards(card: Card, index: number, data: Card[], voteID: number): void {
     const cards = this.getCards(voteID);
     const partCards = this.getPartCards(voteID);
@@ -143,6 +178,12 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Передача массива карточек в поток
+   *
+   * @param data Массив карточек
+   * @param voteID  ID списка карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   private pushDataToStream(data: Card[], voteID: number): void {
     if (voteID === 0) {
       this.cardsSubject.next(data);
@@ -153,6 +194,13 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Проверка наличияя данных в LocalStorage по ключу
+   *
+   * @param key Ключ
+   *
+   * @returns true - если данные есть, иначе false
+   */
   private checkLocalStorage(key: string): boolean {
     if (this.getDataFromLoacalStorage(key)) {
       return true;
@@ -161,15 +209,34 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Получение данных из LocalStorage по ключу
+   *
+   * @param key Ключ
+   *
+   * @returns Массив данных
+   */
   private getDataFromLoacalStorage(key: string): any[] {
     return JSON.parse(localStorage.getItem(key));
   }
 
+  /**
+   * Запись данных из LocalStorage по ключу
+   *
+   * @param key Ключ
+   * @param value Данные
+   */
   private setDataToLoacalStorage(key: string, value: any): void {
     localStorage.removeItem(key);
     localStorage.setItem(key, JSON.stringify(value));
   }
 
+  /**
+   * Подгрузка части данных
+   *
+   * @param id ID последнего элемента предыдущей части данных
+   * @param voteID ID списка карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   public loadPartData(id: number, voteID: number): void {
     const cards = this.getCards(voteID);
     const partCards = this.getPartCards(voteID);
@@ -183,6 +250,12 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Обновление значения голоса
+   *
+   * @param id ID объекта, чей голос обновляется
+   * @param vote ID списка/голоса карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   private sendDataToServer(id: number, vote: number): void {
     this.httpService.patchData(id, vote).subscribe(
       data => {
@@ -194,6 +267,9 @@ export class DataStorageService {
     );
   }
 
+  /**
+   * Очистка массиово карточек для всплывающих окон
+   */
   public clearExtraCards(): void {
     this.favCards = [];
     this.partFavCards = [];
@@ -201,12 +277,24 @@ export class DataStorageService {
     this.partBanCards = [];
   }
 
+  /**
+   * Удаление карточки из потока
+   *
+   * @param id ID карточки
+   * @param cards Массив карточек
+   * @param vote ID списка/голоса карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   private removeFromPartCards(id: number, cards: Card[], vote: number): void {
     cards = cards.filter((item: Card) => item.id !== id);
     this.setPartCards(cards, vote);
     this.pushDataToStream(cards, vote);
   }
 
+  /**
+   * Перенос карточки из основного списка в список избранных
+   *
+   * @param id ID карточки
+   */
   public setToFavListFromMain(id: number): void {
     this.sendDataToServer(id, 1);
     this.openFavCards.push(new OpenCard(id));
@@ -216,6 +304,11 @@ export class DataStorageService {
     this.setDataToLoacalStorage(this.openCardsStorageKey, this.openCards);
   }
 
+  /**
+   * Перенос карточки из основного списка в черный список
+   *
+   * @param id ID карточки
+   */
   public setToBanListFromMain(id: number): void {
     this.sendDataToServer(id, 2);
     this.openBanCards.push(new OpenCard(id));
@@ -225,6 +318,11 @@ export class DataStorageService {
     this.setDataToLoacalStorage(this.openCardsStorageKey, this.openCards);
   }
 
+  /**
+   * Перенос карточки из черного списка в список избранных
+   *
+   * @param id ID карточки
+   */
   public setToFavListFromBan(id: number): void {
     this.sendDataToServer(id, 1);
     this.openFavCards.push(new OpenCard(id));
@@ -234,6 +332,11 @@ export class DataStorageService {
     this.setDataToLoacalStorage(this.openBanCardsStorageKey, this.openBanCards);
   }
 
+  /**
+   * Перенос карточки из черного списка в основной
+   *
+   * @param id ID карточки
+   */
   public setToMainListFromBan(id: number): void {
     this.sendDataToServer(id, 0);
     this.addToMainList(id, this.partBanCards);
@@ -244,6 +347,11 @@ export class DataStorageService {
     this.setDataToLoacalStorage(this.openBanCardsStorageKey, this.openBanCards);
   }
 
+  /**
+   * Перенос карточки из списка избранных в черный список
+   *
+   * @param id ID карточки
+   */
   public setToBanListFromFav(id: number): void {
     this.sendDataToServer(id, 2);
     this.openBanCards.push(new OpenCard(id));
@@ -253,6 +361,11 @@ export class DataStorageService {
     this.setDataToLoacalStorage(this.openFavCardsStorageKey, this.openFavCards);
   }
 
+  /**
+   * Перенос карточки из списка избранных в основной список
+   *
+   * @param id ID карточки
+   */
   public setToMainListFromFav(id: number): void {
     this.sendDataToServer(id, 0);
     this.addToMainList(id, this.partFavCards);
@@ -263,15 +376,32 @@ export class DataStorageService {
     this.setDataToLoacalStorage(this.openFavCardsStorageKey, this.openFavCards);
   }
 
+  /**
+   * Добавление карточки в основной поток
+   *
+   * @param id ID картоски
+   * @param fromList Список карточек из которого перенится карточка
+   */
   private addToMainList(id: number, fromList: Card[]): void {
     const targetCard = fromList.find(card => card.id === id);
     this.partCards.push(targetCard);
   }
 
+  /**
+   * Установка hash ID в LocalStorage
+   *
+   * @param id hash ID
+   */
   public setCurrentIDtoStorage(id: number): void {
     this.setDataToLoacalStorage(this.hashIDStorageKey, id);
   }
 
+  /**
+   * Изменения значения открытости карточки
+   *
+   * @param id ID карточки
+   * @param voteID ID списка/голоса карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   public async changeOpenCardParam(id: number, voteID: number): Promise<any> {
     const storageKey = this.getStorageKey(voteID);
     const openCards = this.getOpenCards(voteID);
@@ -280,6 +410,13 @@ export class DataStorageService {
     this.setDataToLoacalStorage(storageKey, openCards);
   }
 
+  /**
+   * Получение ключа LocalStorage для хранения значений открытых карточек для списка
+   *
+   * @param voteID ID списка/голоса карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   *
+   * @returns Ключ
+   */
   private getStorageKey(voteID: number): string {
     if (voteID === 0) {
       return this.openCardsStorageKey;
@@ -290,6 +427,13 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Получение массива заначений открытых карточек для списка
+   *
+   * @param voteID ID списка/голоса карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   *
+   * @returns Массив значений
+   */
   private getOpenCards(voteID: number): OpenCard[] {
     if (voteID === 0) {
       return this.openCards;
@@ -300,6 +444,13 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Получение массива части карточек отображаемых в списке
+   *
+   * @param voteID ID списка/голоса карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   *
+   * @returns Массив карточек
+   */
   private getPartCards(voteID: number): Card[] {
     if (voteID === 0) {
       return this.partCards;
@@ -310,6 +461,13 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Получение массива карточек списка
+   *
+   * @param voteID ID списка/голоса карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   *
+   * @returns Массив карточек
+   */
   private getCards(voteID: number): Card[] {
     if (voteID === 0) {
       return this.cards;
@@ -320,6 +478,12 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Установка массива заначений открытых карточек для списка
+   *
+   * @param newCards Массив новых значений
+   * @param voteID ID списка/голоса карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   private setOpenCards(newCards: OpenCard[], voteID: number): void {
     if (voteID === 0) {
       this.openCards = newCards;
@@ -330,6 +494,12 @@ export class DataStorageService {
     }
   }
 
+  /**
+   * Установка массива части карточек отображаемых в списке
+   *
+   * @param newCards Массив новых карточек
+   * @param voteID ID списка/голоса карточек (0 - основные, 1 - избранные, 2 - в черном списке)
+   */
   private setPartCards(newCards: Card[], voteID: number): void {
     if (voteID === 0) {
       this.partCards = newCards;
